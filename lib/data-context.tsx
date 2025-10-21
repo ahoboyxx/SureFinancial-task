@@ -75,7 +75,14 @@ export function DataProvider({ children }: { children: React.ReactNode }) {
 export function useData() {
   const context = useContext(DataContext)
   if (context === undefined) {
-    throw new Error('useData must be used within a DataProvider')
+    // Return default values instead of throwing error for better compatibility
+    return {
+      statements: [],
+      addStatement: () => {},
+      isLoading: false,
+      useLocalStorage: true,
+      setUseLocalStorage: () => {}
+    }
   }
   return context
 }

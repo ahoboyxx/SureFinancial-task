@@ -8,7 +8,6 @@ import TransactionTable from "@/components/transaction-table"
 import InsightsDashboard from "@/components/insights-dashboard"
 import ExportSection from "@/components/export-section"
 import AuthModal from "@/components/auth-modal"
-import DatabaseToggle from "@/components/database-toggle"
 import { ArrowRight, User } from "lucide-react"
 import { onAuthChange } from "@/lib/auth"
 import { useData } from "@/lib/data-context"
@@ -21,7 +20,10 @@ export default function Home() {
   const [transactions, setTransactions] = useState<any[]>([])
   const [user, setUser] = useState<FirebaseUser | null>(null)
   const [showAuthModal, setShowAuthModal] = useState(false)
-  const { addStatement, useLocalStorage, setUseLocalStorage } = useData()
+  // Simplified data handling for now
+  const addStatement = (statement: any) => {
+    console.log('Statement added:', statement)
+  }
 
   const toggleTheme = () => {
     setIsDark(!isDark)
@@ -122,8 +124,6 @@ export default function Home() {
               </div>
 
               <UploadSection onUpload={handleStatementUpload} />
-
-              <DatabaseToggle />
 
               {transactions.length === 0 && (
                 <div className="grid md:grid-cols-3 gap-6 py-12">

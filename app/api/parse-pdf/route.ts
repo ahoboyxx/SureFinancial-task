@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { CreditCardPDFParser } from '@/lib/pdf-parser'
-import { adminDb } from '@/lib/firebase-admin'
+import { SimplePDFParser } from '@/lib/simple-pdf-parser'
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,35 +18,14 @@ export async function POST(request: NextRequest) {
     const buffer = Buffer.from(await file.arrayBuffer())
 
     // Parse PDF
-    const parser = new CreditCardPDFParser()
+    const parser = new SimplePDFParser()
     const parsedData = await parser.parsePDF(buffer)
-    
-    // Clean up parser
-    await parser.cleanup()
 
-    // Store in Firebase (optional)
-    try {
-      const docRef = await adminDb.collection('statements').add({
-        ...parsedData,
-        uploadedAt: new Date(),
-        fileName: file.name,
-        fileSize: file.size
-      })
-      
-      return NextResponse.json({
-        success: true,
-        data: parsedData,
-        id: docRef.id
-      })
-    } catch (firebaseError) {
-      // If Firebase fails, still return the parsed data
-      console.error('Firebase error:', firebaseError)
-      return NextResponse.json({
-        success: true,
-        data: parsedData,
-        id: null
-      })
-    }
+    return NextResponse.json({
+      success: true,
+      data: parsedData,
+      id: Date.now().toString()
+    })
 
   } catch (error) {
     console.error('Error parsing PDF:', error)

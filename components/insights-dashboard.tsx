@@ -2,7 +2,27 @@
 
 import { Card } from "@/components/ui/card"
 import { TrendingUp, AlertCircle, CheckCircle } from "lucide-react"
-import { PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar } from "recharts"
+import { PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, TooltipProps } from "recharts"
+
+type ValueType = number | string
+type NameType = string
+
+function ChartTooltipContent({
+  active,
+  payload,
+  label,
+  className,
+}: TooltipProps<ValueType, NameType>) {
+  if (active && payload && payload.length) {
+    return (
+      <div className={`bg-card border border-border rounded-lg p-3 shadow-lg ${className || ''}`}>
+        <p className="font-medium">{`${label}`}</p>
+        <p className="text-sm text-muted-foreground">{`${payload[0].name}: ₹${payload[0].value}`}</p>
+      </div>
+    )
+  }
+  return null
+}
 
 interface Transaction {
   date: string
@@ -145,7 +165,7 @@ export default function InsightsDashboard({ transactions, statements }: Insights
                 cx="50%"
                 cy="50%"
                 labelLine={false}
-                label={({ name, value }) => `${name}: ₹${value}`}
+                label={({ name, value }: { name: string; value: number }) => `${name}: ₹${value}`}
                 outerRadius={80}
                 fill="#8884d8"
                 dataKey="value"
@@ -154,7 +174,7 @@ export default function InsightsDashboard({ transactions, statements }: Insights
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value) => `₹${value}`} />
+              <Tooltip content={<ChartTooltipContent />} />
             </PieChart>
           </ResponsiveContainer>
         </Card>
@@ -166,7 +186,7 @@ export default function InsightsDashboard({ transactions, statements }: Insights
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 12 }} />
               <YAxis />
-              <Tooltip formatter={(value) => `₹${value}`} />
+              <Tooltip content={<ChartTooltipContent />} />
               <Bar dataKey="amount" fill="var(--primary)" radius={[8, 8, 0, 0]} />
             </BarChart>
           </ResponsiveContainer>
