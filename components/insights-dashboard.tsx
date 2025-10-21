@@ -2,27 +2,8 @@
 
 import { Card } from "@/components/ui/card"
 import { TrendingUp, AlertCircle, CheckCircle } from "lucide-react"
-import { PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, TooltipProps } from "recharts"
-
-type ValueType = number | string
-type NameType = string
-
-function ChartTooltipContent({
-  active,
-  payload,
-  label,
-  className,
-}: TooltipProps<ValueType, NameType>) {
-  if (active && payload && payload.length) {
-    return (
-      <div className={`bg-card border border-border rounded-lg p-3 shadow-lg ${className || ''}`}>
-        <p className="font-medium">{`${label}`}</p>
-        <p className="text-sm text-muted-foreground">{`${payload[0].name}: ₹${payload[0].value}`}</p>
-      </div>
-    )
-  }
-  return null
-}
+import { PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, ResponsiveContainer, BarChart, Bar } from "recharts"
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart"
 
 interface Transaction {
   date: string
@@ -158,7 +139,14 @@ export default function InsightsDashboard({ transactions, statements }: Insights
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         <Card className="p-6">
           <h3 className="font-semibold mb-4">Spending by Category</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ChartContainer
+            config={{
+              value: {
+                label: "Amount",
+              },
+            }}
+            className="h-[300px]"
+          >
             <PieChart>
               <Pie
                 data={categoryData}
@@ -174,22 +162,35 @@ export default function InsightsDashboard({ transactions, statements }: Insights
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip content={<ChartTooltipContent />} />
+              <ChartTooltip 
+                content={<ChartTooltipContent />}
+                formatter={(value: any) => [`₹${value}`, "Amount"]}
+              />
             </PieChart>
-          </ResponsiveContainer>
+          </ChartContainer>
         </Card>
 
         <Card className="p-6">
           <h3 className="font-semibold mb-4">Top Merchants</h3>
-          <ResponsiveContainer width="100%" height={300}>
+          <ChartContainer
+            config={{
+              amount: {
+                label: "Amount",
+              },
+            }}
+            className="h-[300px]"
+          >
             <BarChart data={topMerchants}>
               <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" />
               <XAxis dataKey="name" angle={-45} textAnchor="end" height={80} tick={{ fontSize: 12 }} />
               <YAxis />
-              <Tooltip content={<ChartTooltipContent />} />
+              <ChartTooltip 
+                content={<ChartTooltipContent />}
+                formatter={(value: any) => [`₹${value}`, "Amount"]}
+              />
               <Bar dataKey="amount" fill="var(--primary)" radius={[8, 8, 0, 0]} />
             </BarChart>
-          </ResponsiveContainer>
+          </ChartContainer>
         </Card>
       </div>
 
