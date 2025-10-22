@@ -5,7 +5,7 @@ A comprehensive PDF parser that extracts key data points from credit card statem
 ## Features
 
 ### PDF Parsing
-- **5 Major Credit Card Issuers**: Chase, American Express, Capital One, Citi, and Discover
+- **5 Major Credit Card Issuers**:
 - **5 Key Data Points Extracted**:
   - Transaction information (date, description, amount)
   - Card issuer identification
